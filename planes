@@ -82,6 +82,8 @@ class PlaneField:
 				self.stack.append(self.pp)
 			case '^':
 				self.pp = self.stack.pop()
+			case '$':
+				self.jump(0)
 		
 		return 0
 
