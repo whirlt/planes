@@ -1,0 +1,115 @@
+#!/bin/python
+from sys import argv, stdout
+
+##################################################
+#
+# THIS CODE IS TERRIBLE, PLEASE DON'T LOOK AT IT!!
+#
+##################################################
+
+class Plane:
+	def __init__(self, source):
+		self.source: str = source
+		self.pc: int = 0
+		self.loop: list[int] = [0]
+
+class PlaneField:
+	def __init__(self, planes):
+		self.planes: list[Plane] = planes
+		self.pp: int = 0
+		self.stack: list[int] = []
+            
+	def advance(self):
+		TEMP: str = self.planes[self.pp].source[self.planes[self.pp].pc]
+		self.planes[self.pp].pc += 1
+		return TEMP
+		
+	def position(self):
+		return self.planes[self.pp].pc
+		
+	def jump(self, position: int):
+		self.planes[self.pp].pc = position
+        
+	def run(self) -> int:
+		INSTRUCTION: str = self.advance()
+		TEMP: int = 0
+		
+		match INSTRUCTION:
+			case '#':
+				self.stack.append(ord(input()[0]))
+			case '.':
+				stdout.write(f"{chr(self.stack.pop())}")
+			case '~':
+				self.stack.pop()
+			case "'":
+				self.stack.append(ord(self.advance()))
+			case '(':
+				self.planes[self.pp].loop.append(self.position() - 1)
+			case ')':
+				if self.stack[-1] != 0:
+					self.jump(self.planes[self.pp].loop[-1])
+				else:
+					self.planes[self.pp].loop.pop()
+			case '*':
+				self.jump(self.planes[0].pc)
+			case '<':
+				self.pp -= 1
+			case '>':
+				self.pp += 1
+			case '?':
+				if self.stack[-1] != 0:
+					self.pp += 1
+			case '!':
+				if self.stack[-1] != 0:
+					self.pp -= 1
+			case '+':
+				self.stack[-2] += self.stack[-1]
+				self.stack.pop()
+			case '-':
+				self.stack[-2] -= self.stack[-1]
+				self.stack.pop()
+			case ':':
+				self.stack.append(self.stack[-1])
+			case '%':
+				TEMP = self.stack[-1]
+				self.stack[-1] = self.stack[-2]
+				self.stack[-2] = TEMP
+			case 'H':
+				return 1
+			case 'h':
+				self.pp = 0
+			case '&':
+				self.stack.append(self.pp)
+			case '^':
+				self.pp = self.stack.pop()
+		
+		return 0
+
+engine: PlaneField = PlaneField([])
+
+def main():
+	try:
+		if len(argv) < 2:
+			print(f"Usage: {argv[0]} <script>")
+			exit(1)
+		
+		with open(argv[1], "r") as file:
+			for line in file.read().split('\n'):
+				engine.planes.append(Plane(line))
+			engine.planes.pop() # pops an empty element
+            
+		while True:
+			if engine.run():
+				break # if hard halt is triggered, break the endless loop
+	except IndexError:
+		print(f"""\n\x1b[1mCRASH!\x1b[0m
+STACK DUMP: {engine.stack}""")
+	except FileNotFoundError:
+		print("provided file doesn't exist")
+	except KeyboardInterrupt:
+		exit()
+
+if __name__ == '__main__':
+	main()
+	
+# i said don't look at it :(, me sad now
