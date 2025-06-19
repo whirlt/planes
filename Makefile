@@ -12,7 +12,9 @@ $(SRC) :
 
 build : $(SRC)
 	$(CC) -o $(TARGET) $^
-	ln -s $(TARGET) ./samples/$(TARGET)
+	cd samples
+	ln -s ../$(TARGET) $(TARGET)
+	cd -
 
 clean :
 	unlink ./samples/$(TARGET)
