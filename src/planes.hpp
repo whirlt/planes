@@ -19,6 +19,7 @@ const char* debug_string =
 	"stack: [%d, %d, %d, %d, %d] (%d)\n"
 	"plane (program pointer): %d\n"
 	"program counter: %d\n"
+	"link register: %d\n"
 	;
 
 class Plane {
@@ -61,7 +62,7 @@ class PlaneField {
 	public:
 		vector<Plane*> planes;
 		vector<int> stack;
-		int active_pointer = 0;
+		int active_pointer = 0, link_register = 0;
 		
 		int execute() {
 			Plane *active = planes[active_pointer], *main = planes[0];
@@ -98,7 +99,7 @@ class PlaneField {
 					else active->end_loop();
 					break;
 				case '*':
-					active->pc = main->pc;
+					stack.push_back(link_register);
 					break;
 				case '<':
 					active_pointer--;
@@ -129,15 +130,18 @@ class PlaneField {
 					active_pointer = 0;
 					break;
 				case '&':
-					stack.push_back(active_pointer);
+					link_register = active_pointer;
 					break;
 				case '^':
+				case '@':
+					if (instruction == '@') active->pc = 0;
 					active_pointer = stack.back();
 					stack.pop_back();
 					break;
 				case '=':
 					active->pc = 0;
 					active_pointer--;
+					break;
 				case '$':
 					active->pc = 0;
 					active_pointer++;
@@ -164,7 +168,8 @@ class PlaneField {
 				stack.size() < 5 ? 0 : stack.at(4),
 				stack.size(),
 				active_pointer,
-				active->pc
+				active->pc,
+				link_register
 			);
 
 			system("read");
