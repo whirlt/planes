@@ -1,20 +1,17 @@
-#############################
-# RUN `make build` TO BUILD #
-#############################
+#######################
+# RUN `make` TO BUILD #
+#######################
 
 CC = g++
 SRC = ./src/main.cpp
 TARGET = planes
 
-.PHONY: build, clean
+.PHONY: clean
 
 $(SRC) :
 
-build : $(SRC)
+$(TARGET) : $(SRC)
 	$(CC) -o $(TARGET) $^
-	cd samples
-	ln -s ../$(TARGET) $(TARGET)
-	cd -
 
 clean :
 	unlink ./samples/$(TARGET)
