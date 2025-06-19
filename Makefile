@@ -1,6 +1,6 @@
-#######################
-# RUN `make` TO BUILD #
-#######################
+#############################
+# RUN `make build` TO BUILD #
+#############################
 
 CC = g++
 SRC = ./src/main.cpp
@@ -10,7 +10,7 @@ TARGET = planes
 
 $(SRC) :
 
-$(TARGET) : $(SRC)
+build : $(SRC)
 	$(CC) -o $(TARGET) $^
 
 clean :
