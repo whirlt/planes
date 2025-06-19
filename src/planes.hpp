@@ -66,6 +66,8 @@ class PlaneField {
 		int execute() {
 			Plane *active = planes[active_pointer], *main = planes[0];
 			int swap;
+
+			if (active->source[active->pc - 1] == '\'') return CLEAR;
 			
 			int instruction = active->peek();
 			active->advance();
