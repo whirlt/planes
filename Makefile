@@ -11,7 +11,7 @@ TARGET = planes
 $(SRC) :
 
 build : $(SRC)
-	$(CC) -o $(TARGET) $^
+	$(CC) -g -o $(TARGET) $^
 
 clean :
 	unlink ./samples/$(TARGET)
